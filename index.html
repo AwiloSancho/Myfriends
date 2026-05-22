@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Friends - Dashboard (Alt)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Local custom CSS (falls back to public/styles.css) -->
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* small overrides to align with the example look */
+    .auth-card{display:flex;width:900px;min-height:480px;border-radius:12px;overflow:hidden}
+    .left-panel{background:linear-gradient(135deg,#0ea5a4,#ff7a59);width:320px}
+    /* make the sidebar match the left-panel gradient */
+    .sidebar{width:260px;background:linear-gradient(135deg,#0ea5a4,#ff7a59);color:#fff}
+    .left-panel h3{letter-spacing:1px}
+    .sidebar{width:260px}
+    .dashboard-header{background:linear-gradient(120deg, rgba(14,165,164,0.04), rgba(255,122,89,0.02));border-bottom:1px solid rgba(14,165,164,0.06);padding:12px 0}
+    .sidebar-menu li{list-style:none;padding:12px 16px;cursor:pointer;color:rgba(255,255,255,0.9)}
+    .sidebar-menu li.active{background:rgba(255,255,255,0.08);border-radius:8px}
+  </style>
+</head>
+<body class="auth-mode">
+
+<!-- ================= AUTH SECTION ================= -->
+<div id="authSection" class="container py-4 d-flex align-items-center justify-content-center" style="min-height:100vh;">
+  <div class="row justify-content-center w-100">
+    <div class="col-12 d-flex align-items-center justify-content-center">
+      <div class="auth-card d-flex">
+
+        <div class="auth-top" style="position:absolute;top:12px;right:12px;z-index:5">
+          <button class="btn btn-outline-secondary btn-sm dark-toggle" title="Toggle dark mode">
+            <i class="fas fa-moon"></i>
+            <span class="toggle-label ms-2 d-none d-sm-inline">Dark</span>
+          </button>
+        </div>
+
+        <!-- LEFT PANEL -->
+        <div class="left-panel d-flex flex-column align-items-center justify-content-center text-white text-center p-4">
+          <h3>WELCOME TO</h3>
+          <div class="app-icon mb-2">
+            <img id="authLogoImg" src="images/logo.png" alt="My Friends Logo" style="max-width:120px; display:none">
+            <div id="authLogoFallback" class="logo-fallback d-none"><i class="fas fa-user-friends fa-2x"></i></div>
+          </div>
+          <p class="small">My Friends Application<br>School Platform</p>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right-panel p-4 w-100">
+          <ul class="nav nav-pills mb-3" id="authTabs">
+            <li class="nav-item">
+              <button class="nav-link active nav-pill" id="login-tab" data-target="loginPane">Log In</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link nav-pill" id="register-tab" data-target="registerPane">Register</button>
+            </li>
+          </ul>
+
+          
+
+          <div id="authAlert" class="alert d-none" role="alert"></div>
+
+          <!-- LOGIN FORM -->
+          <div id="loginPane">
+            <form id="loginForm" onsubmit="return false;">
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" id="loginEmail" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" id="loginPassword" class="form-control" required />
+              </div>
+              <button id="loginBtn" type="button" class="btn btn-primary w-100">Log In</button>
+            </form>
+          </div>
+
+          <!-- REGISTER FORM -->
+          <div id="registerPane" class="d-none">
+            <form id="registerForm" onsubmit="return false;">
+              <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text" id="registerName" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" id="registerEmail" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" id="registerPassword" class="form-control" required />
+              </div>
+              <button id="registerBtn" type="button" class="btn btn-success w-100">Register</button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= APP SECTION ================= -->
+<div id="appSection" class="d-none">
+
+  <!-- HEADER -->
+  <div class="dashboard-header">
+    <div class="container d-flex justify-content-between align-items-center">
+      <h2 class="mb-0">My Friends</h2>
+        <div class="d-flex align-items-center gap-2">
+        <span id="currentUserLabel" class="text-muted"></span>
+        <button id="darkModeToggle" class="btn btn-outline-secondary btn-sm dark-toggle" title="Toggle dark mode">
+          <i class="fas fa-moon"></i>
+          <span class="toggle-label ms-2 d-none d-sm-inline">Dark</span>
+        </button>
+        <button id="logoutBtn" class="btn btn-outline-secondary btn-sm">Log out</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-wrapper d-flex">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar bg-white p-3 shadow-sm">
+      <div class="sidebar-header d-flex justify-content-between align-items-center mb-3">
+        <div class="sidebar-brand d-flex align-items-center gap-2">
+          <i class="fas fa-user-friends fa-lg"></i>
+          <span class="fw-bold">My Friends</span>
+        </div>
+        <button class="btn btn-sm" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+      </div>
+      <ul class="sidebar-menu p-0">
+        <li class="active" data-target="section-add-friend"><i class="fas fa-user-plus me-2"></i> <span>Add Friend</span></li>
+        <li data-target="section-search"><i class="fas fa-search me-2"></i> <span>Search</span></li>
+        <li data-target="section-friends"><i class="fas fa-list me-2"></i> <span>Friends List</span> <span id="friendsCount" class="badge bg-light text-dark ms-2">0</span></li>
+        <li data-target="section-analysis"><i class="fas fa-chart-bar me-2"></i> <span>Analysis</span></li>
+      </ul>
+      <div class="sidebar-footer mt-4">
+        <div class="user-info d-flex gap-2 align-items-center">
+          <div class="user-avatar bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:40px;height:40px;"><i class="fas fa-user"></i></div>
+          <div class="user-details small">
+            <div id="currentUserName">Guest</div>
+            <div class="text-muted">Online</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-content flex-fill p-4">
+      <div class="main-content">
+
+        <!-- ADD FRIEND SECTION -->
+        <div id="section-add-friend" class="section active">
+          <div class="section-card mb-4">
+            <div class="section-header mb-3">
+              <h2><i class="fas fa-user-plus me-2"></i>Add New Friend</h2>
+              <p class="text-muted">Fill in your friend's information below</p>
+            </div>
+            <form id="friendForm" class="row g-3">
+              <input type="hidden" id="friendId" />
+              <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input type="text" id="name" class="form-control" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Nation</label>
+                <input type="text" id="nation" class="form-control" required />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Birthday</label>
+                <input type="date" id="birthday" class="form-control" required />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Gender</label>
+                <select id="gender" class="form-select" required>
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Telephone</label>
+                <input type="text" id="telephone" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" id="email" class="form-control" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Height (cm)</label>
+                <input type="number" id="height" class="form-control" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Weight (kg)</label>
+                <input type="number" id="weight" class="form-control" />
+              </div>
+              <div class="col-12">
+                <label class="form-label">Photos (comma separated URLs)</label>
+                <input type="text" id="photos" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Education level</label>
+                <select id="educationLevel" class="form-select">
+                  <option value="">Select level</option>
+                  <option value="primary">Primary</option>
+                  <option value="secondary">Secondary</option>
+                  <option value="bachelor">Bachelor</option>
+                  <option value="master">Master</option>
+                  <option value="phd">PhD</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Address</label>
+                <textarea id="address" class="form-control" rows="2"></textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Hobbies (comma separated)</label>
+                <input type="text" id="hobbies" class="form-control" />
+              </div>
+              <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i><span id="friendFormSubmitLabel">Add Friend</span></button>
+                <button type="button" id="resetFriendFormBtn" class="btn btn-outline-secondary"><i class="fas fa-redo me-2"></i>Reset</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- SEARCH SECTION -->
+        <div id="section-search" class="section mb-4 d-none">
+          <div class="section-card p-3">
+            <div class="section-header mb-3">
+              <h2><i class="fas fa-search me-2"></i>Search Friends</h2>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-4"><input type="text" id="searchName" class="form-control" placeholder="Name" /></div>
+              <div class="col-md-4"><input type="text" id="searchNation" class="form-control" placeholder="Nation" /></div>
+              <div class="col-md-4"><select id="searchGender" class="form-select"><option value="">Any gender</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select></div>
+              <div class="col-md-4"><input type="text" id="searchHobby" class="form-control" placeholder="Hobby" /></div>
+              <div class="col-md-4"><select id="searchEducationLevel" class="form-select"><option value="">Any education</option><option value="primary">Primary</option><option value="secondary">Secondary</option><option value="bachelor">Bachelor</option><option value="master">Master</option><option value="phd">PhD</option></select></div>
+              <div class="col-12 d-flex gap-2"><button id="searchBtn" class="btn btn-primary">Search</button><button id="clearSearchBtn" class="btn btn-outline-secondary">Clear</button></div>
+            </div>
+            <!-- Search results will be rendered here -->
+            <div id="searchResults" class="mt-3"></div>
+          </div>
+        </div>
+
+        <!-- FRIENDS LIST SECTION -->
+        <div id="section-friends" class="section">
+          <div class="section-card p-3">
+            <div class="d-flex justify-content-between mb-2">
+              <h2><i class="fas fa-list me-2"></i>Friends List</h2>
+              <div>
+                <button id="refreshBtn" class="btn btn-outline-secondary btn-sm"><i class="fas fa-sync me-1"></i>Refresh</button>
+              </div>
+            </div>
+            <div id="friendsAlert" class="alert d-none" role="alert"></div>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead><tr><th>Name</th><th>Nation</th><th>Gender</th><th>Height</th><th>Weight</th><th>Hobbies</th><th>Actions</th></tr></thead>
+                <tbody id="friendsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANALYSIS SECTION -->
+        <div id="section-analysis" class="section d-none">
+          <div class="section-card p-3">
+            <h2><i class="fas fa-chart-bar me-2"></i>Friends Analysis</h2>
+            <div class="row g-2 mt-3">
+              <div class="col-md-4"><button id="btnNationDistribution" class="btn btn-outline-primary w-100 btn-sm">Nation distribution</button></div>
+              <div class="col-md-4"><button id="btnGenderRatio" class="btn btn-outline-primary w-100 btn-sm">Gender ratio</button></div>
+              <div class="col-md-4"><button id="btnHobbyDistribution" class="btn btn-outline-primary w-100 btn-sm">Hobby statistics</button></div>
+              <div class="col-md-4"><button id="btnBodyStats" class="btn btn-outline-primary w-100 btn-sm">Body stats</button></div>
+              <div class="col-md-4"><button id="btnAgeDistribution" class="btn btn-outline-primary w-100 btn-sm">Age distribution</button></div>
+            </div>
+            <div id="chartCanvas" class="chart-canvas border rounded p-4 text-center mt-3"><p class="text-muted">Select an analysis card to view chart</p></div>
+            <pre id="analysisOutput" class="bg-light p-2 rounded small mt-3" style="max-height:220px;overflow:auto;display:none"></pre>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- App JS (use existing public/app.js) -->
+<script src="app.js"></script>
+
+<!-- Optional small helper to toggle sidebar sections (keeps IDs used by app.js intact) -->
+<script>
+  document.querySelectorAll('.sidebar-menu li').forEach(li=>{
+    li.addEventListener('click', ()=>{
+      document.querySelectorAll('.sidebar-menu li').forEach(x=>x.classList.remove('active'));
+      li.classList.add('active');
+      const target = li.getAttribute('data-target');
+      if(!target) return;
+      document.querySelectorAll('.section').forEach(s=>s.classList.add('d-none'));
+      const el = document.getElementById(target);
+      if(el) el.classList.remove('d-none');
+      // if friend list, refresh data now (do not auto-load on auth)
+      if (target === 'section-friends' && typeof refreshFriends === 'function') {
+        refreshFriends();
+      }
+    })
+  })
+</script>
+
+</body>
+</html>
